@@ -1,58 +1,77 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <img
+      @click="mine"
+      alt="Vue logo"
+      src="https://nineplanets.org/wp-content/uploads/2019/09/moon.png"
+    />
+    <h3 :class="{ 'text-danger': cheese > 100 }">Count: {{ cheese }}</h3>
+    <!-- <button v-if="count > 9" @click="buyPick">Buy Pick</button> -->
+    <button
+      class="btn btn-warning"
+      v-for="equip in equipment"
+      :key="equip.id"
+      :disabled="cheese < equip.cost"
+      @click="buy(equip)"
+    >
+      Buy {{ equip.name }} (owned: {{ equip.count }})
+    </button>
+    <button @click="cheese = 0">Reset</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
+  name: "MoonComponent",
+  mounted() {
+    setInterval(() => {
+      this.automine();
+    }, 3000);
+  },
+  data() {
+    return {
+      cheese: 0,
+      equipment: {
+        picks: {
+          id: 1,
+          name: "pick",
+          count: 0,
+          cost: 10
+        },
+        carts: {
+          id: 2,
+          name: "carts",
+          count: 0,
+          cost: 25
+        },
+        moustrounauts: {
+          id: 3,
+          name: "mouse",
+          count: 0,
+          cost: 100
+        }
+      }
+    };
+  },
+  methods: {
+    mine() {
+      let picks = this.equipment.picks.count;
+      let carts = this.equipment.carts.count * 5;
+      let mouses = this.equipment.moustrounauts.count * 10;
+      this.cheese += 1 + picks + carts + mouses;
+    },
+    automine() {
+      this.cheese++;
+    },
+    buy(equip) {
+      if (equip.cost < this.cheese) {
+        this.cheese -= equip.cost;
+        equip.count++;
+      }
+    }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+<style scoped></style>
